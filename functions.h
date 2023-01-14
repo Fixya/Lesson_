@@ -7,7 +7,7 @@ void checkEvents(sf::RenderWindow& window, Ball& ball) {
 	if (ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
 		window.close();
 	while (window.pollEvent(event)) {
-		if (event.type == sf::Event::Closed )
+		if (event.type == sf::Event::Closed)
 			window.close();
 	}
 }

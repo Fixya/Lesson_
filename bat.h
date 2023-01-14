@@ -7,7 +7,7 @@ struct Bat
 	float speedx;
 };
 
-void batInit(Bat& bat) 
+void batInit(Bat& bat)
 {
 	bat.shape.setSize(sf::Vector2f(BAT_WIDTH, BAT_HEIGHT));
 	bat.shape.setFillColor(BAT_COLOR);
@@ -34,7 +34,7 @@ void batReboundEdges(Bat& bat)
 		bat.shape.setPosition(WINDOW_WIDTH - BAT_WIDTH, baty);
 }
 
-void batUpdate(Bat& bat) 
+void batUpdate(Bat& bat)
 {
 	batControl(bat);
 	batReboundEdges(bat);
@@ -56,7 +56,7 @@ void initBall(Ball& ball)
 	ball.ball.setRadius(BALL_RADIUS);
 	ball.ball.setFillColor(BALL_COLOR);
 	ball.ball.setPosition(BALL_START_POS);
-	float arr_speed[]{ -0.1,-0.5,-0.2,0.1,0.5,0.2 };
+	float arr_speed[]{ -1,-0.5,-2,1,0.5,2 };
 	int index = rand() % 6;
 	ball.ballspeedX = arr_speed[index];
 	index = rand() % 6;
@@ -76,7 +76,7 @@ void moveBall(Ball& ball)
 }
 
 
-void ballDraw(sf::RenderWindow& window, Ball& ball) 
+void ballDraw(sf::RenderWindow& window, Ball& ball)
 {
 	window.draw(ball.ball);
 }
@@ -87,39 +87,37 @@ void ballControl(Ball& ball, Bat& shape)
 	{
 		ball.ballspeedY = -ball.ballspeedY;
 	}
-	/*if ((shape.shape.getPosition().x <= ball.ball.getPosition().x && ball.ball.getPosition().x <= shape.shape.getPosition().x + BAT_WIDTH) && (shape.shape.getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= shape.shape.getPosition().y + BAT_HEIGHT))
-	{
-		ball.ballspeedX = -ball.ballspeedX;
-	}
-
-	if ((shape.shape.getPosition().x <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= shape.shape.getPosition().x + BAT_WIDTH) && (shape.shape.getPosition().y <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= shape.shape.getPosition().y + BAT_HEIGHT))
-	{
-		ball.ballspeedX = -ball.ballspeedX;
-	}*/
 }
 
 struct Object
 {
 	sf::RectangleShape object[size_ob];
+	//Text  text;
 };
+
+/*void PText(Object& text, const sf::Vector2f textPosition)
+{
+	Font font;
+	text.text.setFont(font);
+	text.text.setCharacterSize(30);
+	text.text.setPosition(textPosition);
+}*/
 
 void obInit(Object& object)
 {
-	int h = 0;
 	for (int i = 0; i < size_ob; i++)
 	{
-		//object.object[i].setSize(sf::Vector2f(OB_WIDTH, OB_HEIGHT));
+		object.object[i].setSize(sf::Vector2f(OB_WIDTH, OB_HEIGHT));
 		object.object[i].setFillColor(OB_COLOR);
-		object.object[i].setPosition(OB_POS);
 		if (object.object[i].getPosition().x + OB_WIDTH < WINDOW_WIDTH)
 		{
-			object.object[i].setSize(sf::Vector2f(OB_WIDTH + (OB_WIDTH +25)*i, OB_HEIGHT));
+			object.object[i].setPosition(sf::Vector2f(OB_WIDTH + (OB_WIDTH + 25) * i, OB_HEIGHT));
 		}
 	}
 }
 
 void obControl(Object& object, Ball& ball)
-{ 
+{
 	for (int i = 0; i < size_ob; i++)
 	{
 		if ((object.object[i].getPosition().x <= ball.ball.getPosition().x && ball.ball.getPosition().x <= object.object[i].getPosition().x + OB_WIDTH) && (object.object[i].getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= object.object[i].getPosition().y + OB_HEIGHT))
@@ -137,12 +135,8 @@ void obControl(Object& object, Ball& ball)
 			ball.ballspeedY = -ball.ballspeedY;
 			object.object[i].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
 		}
-		if ((object.object[i].getPosition().x <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= object.object[i].getPosition().x + OB_WIDTH) && (object.object[i].getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= object.object[i].getPosition().y + OB_HEIGHT))
-		{
-			ball.ballspeedX = -ball.ballspeedX;
-			object.object[i].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
-		}
 	}
+	
 }
 
 void obUpdate(Object& object, Ball& ball)
