@@ -27,7 +27,7 @@ struct all_text
 
 };
 
-void batInit(Bat& bat) 
+void batInit(Bat& bat)
 {
 	bat.shape.setSize(sf::Vector2f(BAT_WIDTH, BAT_HEIGHT));
 	bat.shape.setFillColor(BAT_COLOR);
@@ -54,7 +54,7 @@ void batReboundEdges(Bat& bat)
 		bat.shape.setPosition(WINDOW_WIDTH - BAT_WIDTH, baty);
 }
 
-void batUpdate(Bat& bat) 
+void batUpdate(Bat& bat)
 {
 	batControl(bat);
 	batReboundEdges(bat);
@@ -70,7 +70,7 @@ void initBall(Ball& ball)
 	ball.ball.setRadius(BALL_RADIUS);
 	ball.ball.setFillColor(BALL_COLOR);
 	ball.ball.setPosition(BALL_START_POS);
-	float arr_speed[]{ -0.1,-0.5,-0.2,0.1,0.5,0.2 };
+	float arr_speed[]{ -1,-0.5,-2,1,0.5,2 };
 	int index = rand() % 6;
 	ball.ballspeedX = arr_speed[index];
 	index = rand() % 6;
@@ -87,15 +87,15 @@ void moveBall(Ball& ball, all_text& hp, all_text& text)
 	if (ball.ball.getPosition().y <= 0 || ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
 		ball.ballspeedY = -ball.ballspeedY;
 
-	if (ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
+	/*if (ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
 	{
 		hp.hp--;
 		text.text[3].setString(std::to_string(hp.hp));
-	}
+	}*/
 }
 
 
-void ballDraw(sf::RenderWindow& window, Ball& ball) 
+void ballDraw(sf::RenderWindow& window, Ball& ball)
 {
 	window.draw(ball.ball);
 }
@@ -106,37 +106,34 @@ void ballControl(Ball& ball, Bat& shape)
 	{
 		ball.ballspeedY = -ball.ballspeedY;
 	}
-	/*if ((shape.shape.getPosition().x <= ball.ball.getPosition().x && ball.ball.getPosition().x <= shape.shape.getPosition().x + BAT_WIDTH) && (shape.shape.getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= shape.shape.getPosition().y + BAT_HEIGHT))
-	{
-		ball.ballspeedX = -ball.ballspeedX;
-	}
-
-	if ((shape.shape.getPosition().x <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= shape.shape.getPosition().x + BAT_WIDTH) && (shape.shape.getPosition().y <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= shape.shape.getPosition().y + BAT_HEIGHT))
-	{
-		ball.ballspeedX = -ball.ballspeedX;
-	}*/
 }
 
-void obInit(Object& object, Object& attempts, all_text& lvl)
+void obInit(Object& object, Object& attempts)
 {
 	for (int j = 0; j < size_lvl; j++)
 	{
 		for (int i = 0; i < size_ob; i++)
 		{
 			object.object[i][j].setSize(sf::Vector2f(OB_WIDTH, OB_HEIGHT));
-			object.object[i][j].setFillColor(sf::Color{ 50 , 205, 50  });
-			if (j + 1 == lvl.lvl)
-			{
-				object.object[i][j].setPosition(sf::Vector2f(55 + (OB_WIDTH + 25) * i, 45 + (OB_HEIGHT + 25) * j));
-			}
-			else object.object[i][j].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
-			attempts.attempts[i][j] = j+1;
+			object.object[i][j].setFillColor(sf::Color{ 50 , 205, 50 });
+			attempts.attempts[i][j] = j + 1;
 		}
 	}
 }
 
-void obControl(Object& object, Ball& ball, Object& attempts)
+void obControl(Object& object, Ball& ball, Object& attempts, all_text& lvl)
 {
+	for (int j = 0; j < size_lvl; j++)
+	{
+		for (int i = 0; i < size_ob; i++)
+		{
+			if (j + 1 == lvl.lvl && attempts.attempts[i][j] == 0)
+			{
+				object.object[i][j].setPosition(sf::Vector2f(55 + (OB_WIDTH + 25) * i, 45 + (OB_HEIGHT + 25) * j));
+			}
+			else object.object[i][j].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
+		}
+	}
 	for (int j = 0; j < size_lvl; j++)
 	{
 		for (int i = 0; i < size_ob; i++)
@@ -169,26 +166,28 @@ void obControl(Object& object, Ball& ball, Object& attempts)
 	}
 }
 
-void obUpdate(Object& object, Ball& ball, Object& attempts)
+void obUpdate(Object& object, Ball& ball, Object& attempts, all_text& lvl)
 {
-	obControl(object, ball, attempts);
+	obControl(object, ball, attempts, lvl);
 }
 
 void obDraw(sf::RenderWindow& window, Object& object, all_text& lvl)
 {
 	for (int j = 0; j < size_lvl; j++)
 	{
-		if (j + 1 == lvl.lvl)
+
+		for (int i = 0; i < size_ob; i++)
 		{
-			for (int i = 0; i < size_ob; i++)
-			{
-				window.draw(object.object[i][j]);
-			}
+			window.draw(object.object[i][j]);
 		}
+			
 	}
 }
+/*if (j + 1 == lvl.lvl)
+			{
+			}*/
 
-void textInit(all_text & text, all_text& textRect, all_text& font)
+void textInit(all_text& text, all_text& textRect, all_text& font)
 {
 	font.font.loadFromFile("ds-digib.ttf");
 	for (int i = 0; i < 4; i++)
@@ -240,7 +239,7 @@ void lvlAl(all_text& indicator, Object& attempts, all_text& lvl, Object& object,
 				indicator.indicator++;
 			}
 		}
-		if (indicator.indicator == size_ob*2)
+		if (indicator.indicator == size_ob * 2)
 		{
 			lvl.lvl++;
 			text.text[1].setString(std::to_string(lvl.lvl));

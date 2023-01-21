@@ -7,20 +7,28 @@ int main() {
 	RenderWindow window(
 		VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
 	Bat bat;
-	batInit(bat);
 	Ball ball;
-	initBall(ball);
 	Object object;
-	obInit(object);
+	Object attempts;
+	all_text text;
+	all_text textRect;
+	all_text lvl;
+	all_text hp;
+	all_text font;
+	all_text indicator;
+	batInit(bat);
+	initBall(ball);
+	obInit(object, attempts);
+	textInit(text, textRect, font);
 
-	while (window.isOpen())
+
+	while (window.isOpen()) 
 	{
-		while (window.isOpen()) {
-			checkEvents(window, ball);
-			updateGame(bat, ball, object);
-			checkCollisions();
-			drawGame(window, bat, ball, object);
-		}
-		return 0;
+		checkEvents(window, hp);
+		updateGame(bat, ball, object, text, lvl, hp, attempts, indicator);
+		checkCollisions();
+		drawGame(window, bat, ball, object, text, lvl);
 	}
+	return 0;
+	
 }

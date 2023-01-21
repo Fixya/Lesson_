@@ -7,7 +7,7 @@ void checkEvents(sf::RenderWindow& window, all_text& hp) {
 	if (hp.hp == 0)
 		window.close();
 	while (window.pollEvent(event)) {
-		if (event.type == sf::Event::Closed )
+		if (event.type == sf::Event::Closed)
 			window.close();
 	}
 }
@@ -17,7 +17,7 @@ void updateGame(Bat& bat, Ball& ball, Object& object, all_text& text, all_text& 
 	batReboundEdges(bat);
 	ballControl(ball, bat);
 	moveBall(ball, hp, text);
-	obControl(object, ball, attempts);
+	obControl(object, ball, attempts, lvl);
 	PText1(text, lvl, hp);
 	lvlAl(indicator, attempts, lvl, object, text);
 }
