@@ -21,8 +21,8 @@ struct Object
 
 struct all_text
 {
-	sf::Text  text[4];
-	int lvl = 1, hp = 3, indicator = 0;
+	sf::Text  text[3];
+	int hp = 3, point = 0;
 	sf::Font font;
 
 };
@@ -87,11 +87,11 @@ void moveBall(Ball& ball, all_text& hp, all_text& text)
 	if (ball.ball.getPosition().y <= 0 || ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
 		ball.ballspeedY = -ball.ballspeedY;
 
-	/*if (ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
+	if (ball.ball.getPosition().y >= (WINDOW_HEIGHT - 2 * BALL_RADIUS))
 	{
 		hp.hp--;
-		text.text[3].setString(std::to_string(hp.hp));
-	}*/
+		text.text[1].setString(std::to_string(hp.hp));
+	}
 }
 
 
@@ -116,24 +116,14 @@ void obInit(Object& object, Object& attempts)
 		{
 			object.object[i][j].setSize(sf::Vector2f(OB_WIDTH, OB_HEIGHT));
 			object.object[i][j].setFillColor(sf::Color{ 50 , 205, 50 });
-			attempts.attempts[i][j] = j + 1;
+			object.object[i][j].setPosition(sf::Vector2f(55 + (OB_WIDTH + 5) * i, 45 + (OB_HEIGHT + 5) * j));
+			attempts.attempts[i][j] = size_lvl-1;
 		}
 	}
 }
 
-void obControl(Object& object, Ball& ball, Object& attempts, all_text& lvl)
+void obControl(Object& object, Ball& ball, Object& attempts, all_text& point)
 {
-	for (int j = 0; j < size_lvl; j++)
-	{
-		for (int i = 0; i < size_ob; i++)
-		{
-			if (j + 1 == lvl.lvl && attempts.attempts[i][j] == 0)
-			{
-				object.object[i][j].setPosition(sf::Vector2f(55 + (OB_WIDTH + 25) * i, 45 + (OB_HEIGHT + 25) * j));
-			}
-			else object.object[i][j].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
-		}
-	}
 	for (int j = 0; j < size_lvl; j++)
 	{
 		for (int i = 0; i < size_ob; i++)
@@ -142,55 +132,49 @@ void obControl(Object& object, Ball& ball, Object& attempts, all_text& lvl)
 			{
 				ball.ballspeedX = -ball.ballspeedX;
 				attempts.attempts[i][j] = attempts.attempts[i][j]--;
+				point.point += 2;
 			}
 			if ((object.object[i][j].getPosition().x <= ball.ball.getPosition().x + BALL_RADIUS * 2 && ball.ball.getPosition().x + BALL_RADIUS * 2 <= object.object[i][j].getPosition().x + OB_WIDTH) && (object.object[i][j].getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= object.object[i][j].getPosition().y + OB_HEIGHT))
 			{
 				ball.ballspeedY = -ball.ballspeedY;
 				attempts.attempts[i][j] = attempts.attempts[i][j]--;
+				point.point += 2;
 			}
 			if ((object.object[i][j].getPosition().x <= ball.ball.getPosition().x + BALL_RADIUS && ball.ball.getPosition().x + BALL_RADIUS <= object.object[i][j].getPosition().x + OB_WIDTH) && (object.object[i][j].getPosition().y <= ball.ball.getPosition().y && ball.ball.getPosition().y <= object.object[i][j].getPosition().y + OB_HEIGHT))
 			{
 				ball.ballspeedY = -ball.ballspeedY;
 				attempts.attempts[i][j] = attempts.attempts[i][j]--;
+				point.point += 2;
 			}
 			if ((object.object[i][j].getPosition().x <= ball.ball.getPosition().x && ball.ball.getPosition().x <= object.object[i][j].getPosition().x + OB_WIDTH) && (object.object[i][j].getPosition().y <= ball.ball.getPosition().y + BALL_RADIUS && ball.ball.getPosition().y + BALL_RADIUS <= object.object[i][j].getPosition().y + OB_HEIGHT))
 			{
 				ball.ballspeedX = -ball.ballspeedX;
 				attempts.attempts[i][j] = attempts.attempts[i][j]--;
+				point.point += 2;
 			}
 			if (attempts.attempts[i][j] <= 0)
 			{
-				object.object[i][j].setPosition(-OB_WIDTH - 5, -5 - OB_HEIGHT);
+				object.object[i][j].setPosition(-5 - OB_WIDTH, -5 - OB_HEIGHT);
 			}
 		}
 	}
 }
 
-void obUpdate(Object& object, Ball& ball, Object& attempts, all_text& lvl)
-{
-	obControl(object, ball, attempts, lvl);
-}
-
-void obDraw(sf::RenderWindow& window, Object& object, all_text& lvl)
+void obDraw(sf::RenderWindow& window, Object& object)
 {
 	for (int j = 0; j < size_lvl; j++)
 	{
-
 		for (int i = 0; i < size_ob; i++)
 		{
 			window.draw(object.object[i][j]);
 		}
-			
 	}
 }
-/*if (j + 1 == lvl.lvl)
-			{
-			}*/
 
-void textInit(all_text& text, all_text& textRect, all_text& font)
+void textInit(all_text& text, all_text& font)
 {
 	font.font.loadFromFile("ds-digib.ttf");
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		text.text[i].setFont(font.font);
 		text.text[i].setCharacterSize(30);
@@ -198,59 +182,18 @@ void textInit(all_text& text, all_text& textRect, all_text& font)
 	text.text[0].setPosition(textPosition);
 	text.text[1].setPosition(textPosition1);
 	text.text[2].setPosition(textPosition2);
-	text.text[3].setPosition(textPosition3);
 }
 
-void PText1(all_text& text, all_text& lvl, all_text& hp)
+void PText1(all_text& text, all_text& hp, all_text& point)
 {
-	text.text[0].setString("Lvl");
-	text.text[1].setString(std::to_string(lvl.lvl));
-	text.text[2].setString("Hp");
-	text.text[3].setString(std::to_string(hp.hp));
-}
-
-void lvlAl(all_text& indicator, Object& attempts, all_text& lvl, Object& object, all_text& text)
-{
-	if (lvl.lvl == 1)
-	{
-		for (int i = 0; i < size_ob; i++)
-		{
-			if (attempts.attempts[i][0] <= 0)
-			{
-				indicator.indicator++;
-			}
-		}
-		if (indicator.indicator == size_ob)
-		{
-			lvl.lvl++;
-		}
-	}
-	indicator.indicator = 0;
-	if (lvl.lvl == 2)
-	{
-		for (int i = 0; i < size_ob; i++)
-		{
-			if (attempts.attempts[i][0] <= 0)
-			{
-				indicator.indicator++;
-			}
-			if (attempts.attempts[i][1] <= 0)
-			{
-				indicator.indicator++;
-			}
-		}
-		if (indicator.indicator == size_ob * 2)
-		{
-			lvl.lvl++;
-			text.text[1].setString(std::to_string(lvl.lvl));
-		}
-	}
-	indicator.indicator = 0;
+	text.text[0].setString("Hp");
+	text.text[1].setString(std::to_string(hp.hp));
+	text.text[2].setString(std::to_string(point.point));
 }
 
 void textDraw(sf::RenderWindow& window, all_text& text)
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		window.draw(text.text[i]);
 	}

@@ -12,23 +12,22 @@ void checkEvents(sf::RenderWindow& window, all_text& hp) {
 	}
 }
 
-void updateGame(Bat& bat, Ball& ball, Object& object, all_text& text, all_text& lvl, all_text& hp, Object& attempts, all_text& indicator) {
+void updateGame(Bat& bat, Ball& ball, Object& object, all_text& text, all_text& hp, Object& attempts, all_text& point) {
 	batControl(bat);
 	batReboundEdges(bat);
 	ballControl(ball, bat);
 	moveBall(ball, hp, text);
-	obControl(object, ball, attempts, lvl);
-	PText1(text, lvl, hp);
-	lvlAl(indicator, attempts, lvl, object, text);
+	obControl(object, ball, attempts, point);
+	PText1(text, hp, point);
 }
 
 void checkCollisions() {}
 
-void drawGame(sf::RenderWindow& window, Bat& bat, Ball& ball, Object& object, all_text& text, all_text& lvl) {
+void drawGame(sf::RenderWindow& window, Bat& bat, Ball& ball, Object& object, all_text& text) {
 	window.clear();
 	batDraw(window, bat);
 	ballDraw(window, ball);
-	obDraw(window, object, lvl);
+	obDraw(window, object);
 	textDraw(window, text);
 	window.display();
 }
